@@ -1,0 +1,53 @@
+today: "اليوم هو {$date :date}."
+date-short: "تاريخ مختصر: {$date :date length=short}."
+date-long: "تاريخ طويل: {$date :date fields=|month-day-weekday| length=long}."
+datetime: "الموعد: {$date :datetime}."
+time: "الوقت هو {$time :time}."
+time-precise: "الوقت الدقيق: {$time :time precision=second}."
+notifications: |
+  .input {$count :integer}
+  .match $count
+    0    {{ليس لديك أي إشعارات.}}
+    one  {{لديك إشعار واحد.}}
+    two  {{لديك إشعاران.}}
+    few  {{لديك {$count} إشعارات.}}
+    many {{لديك {$count} إشعارًا.}}
+    *    {{لديك {$count} إشعار.}}
+items: |
+  .input {$count :integer}
+  .match $count
+    0    {{لم يُعثر على عناصر.}}
+    one  {{عُثر على عنصر واحد.}}
+    two  {{عُثر على عنصرين.}}
+    few  {{عُثر على {$count} عناصر.}}
+    many {{عُثر على {$count} عنصرًا.}}
+    *    {{عُثر على {$count} عنصر.}}
+price: "السعر: {$amount :currency currency=USD}."
+progress: "التقدم: {$ratio :percent}."
+ranking: |
+  .input {$rank :number}
+  .match $rank
+    one   {{أنت في المرتبة الأولى.}}
+    two   {{أنت في المرتبة الثانية.}}
+    few   {{أنت في المرتبة {$rank}.}}
+    *     {{أنت في المرتبة {$rank}.}}
+decimal: "القيمة: {$num :number minimumFractionDigits=2}."
+signed: "التغيير: {$num :number signDisplay=always}."
+id: "المعرّف: {$num :number minimumIntegerDigits=4}."
+party: |
+  .input {$hostGender :string}
+  .input {$guestCount :number}
+  .match $hostGender $guestCount
+    female 0   {{{$hostName} لا تقيم حفلة.}}
+    female 1   {{{$hostName} تدعو {$guestName} إلى حفلتها.}}
+    female *   {{{$hostName} تدعو {$guestCount} أشخاص، من بينهم {$guestName}، إلى حفلتها.}}
+    male   0   {{{$hostName} لا يقيم حفلة.}}
+    male   1   {{{$hostName} يدعو {$guestName} إلى حفلته.}}
+    male   *   {{{$hostName} يدعو {$guestCount} أشخاص، من بينهم {$guestName}، إلى حفلته.}}
+    *      0   {{{$hostName} لا يقيم حفلة.}}
+    *      1   {{{$hostName} يدعو {$guestName} إلى حفلته.}}
+    *      *   {{{$hostName} يدعو {$guestCount} أشخاص، من بينهم {$guestName}، إلى حفلته.}}
+nav:
+  home: الرئيسية
+  about: حول
+  contact: اتصل بنا

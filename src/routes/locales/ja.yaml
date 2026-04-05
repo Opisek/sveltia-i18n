@@ -1,0 +1,28 @@
+today: "今日は {$date :date} です。"
+date-short: "短い日付：{$date :date length=short}。"
+date-long: "長い日付：{$date :date fields=|month-day-weekday| length=long}。"
+datetime: "予定：{$date :datetime}。"
+time: "現在時刻は {$time :time} です。"
+time-precise: "正確な時刻：{$time :time precision=second}。"
+notifications: |
+  .input {$count :integer}
+  .match $count
+    0   {{通知はありません。}}
+    *   {{{$count} 件の通知があります。}}
+items: "{$count} 件見つかりました。"
+price: "価格：{$amount :currency currency=JPY}。"
+progress: "進捗：{$ratio :percent}。"
+ranking: "{$rank} 位です。"
+decimal: "値：{$num :number minimumFractionDigits=2}。"
+signed: "変化：{$num :number signDisplay=always}。"
+id: "ID：{$num :number minimumIntegerDigits=4}。"
+party: |
+  .input {$guestCount :number}
+  .match $guestCount
+    0   {{{$hostName} はパーティーを開きません。}}
+    1   {{{$hostName} は {$guestName} をパーティーに招きます。}}
+    *   {{{$hostName} は {$guestName} を含む {$guestCount} 人をパーティーに招きます。}}
+nav:
+  home: ホーム
+  about: 概要
+  contact: お問い合わせ

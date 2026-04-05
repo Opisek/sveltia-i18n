@@ -1,0 +1,8 @@
+allowBuilds:
+  svelte-preprocess: true
+  unrs-resolver: false
+
+minimumReleaseAge: 1440
+
+overrides:
+  cookie@<0.7.0: ">=0.7.0"

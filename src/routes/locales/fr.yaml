@@ -1,0 +1,41 @@
+today: "Nous sommes {$date :date}."
+date-short: "Date courte : {$date :date length=short}."
+date-long: "Date longue : {$date :date fields=|month-day-weekday| length=long}."
+datetime: "Rendez-vous : {$date :datetime}."
+time: "Il est {$time :time}."
+time-precise: "Heure précise : {$time :time precision=second}."
+notifications: |
+  .input {$count :integer}
+  .match $count
+    0   {{Vous n’avez pas de notifications.}}
+    one {{Vous avez {$count} notification.}}
+    *   {{Vous avez {$count} notifications.}}
+items: |
+  .input {$count :integer}
+  .match $count
+    0   {{Aucun élément trouvé.}}
+    one {{Trouvé {$count} élément.}}
+    *   {{Trouvé {$count} éléments.}}
+price: "Prix : {$amount :currency currency=EUR}."
+progress: "Progression : {$ratio :percent}."
+ranking: "Vous êtes classé(e) {$rank}e."
+decimal: "Valeur : {$num :number minimumFractionDigits=2}."
+signed: "Variation : {$num :number signDisplay=always}."
+id: "ID : {$num :number minimumIntegerDigits=4}."
+party: |
+  .input {$hostGender :string}
+  .input {$guestCount :number}
+  .match $hostGender $guestCount
+    female 0   {{{$hostName} n’organise pas de fête.}}
+    female 1   {{{$hostName} invite {$guestName} à sa fête.}}
+    female *   {{{$hostName} invite {$guestCount} personnes, dont {$guestName}, à sa fête.}}
+    male   0   {{{$hostName} n’organise pas de fête.}}
+    male   1   {{{$hostName} invite {$guestName} à sa fête.}}
+    male   *   {{{$hostName} invite {$guestCount} personnes, dont {$guestName}, à sa fête.}}
+    *      0   {{{$hostName} n’organise pas de fête.}}
+    *      1   {{{$hostName} invite {$guestName} à sa fête.}}
+    *      *   {{{$hostName} invite {$guestCount} personnes, dont {$guestName}, à sa fête.}}
+nav:
+  home: Accueil
+  about: À propos
+  contact: Contact

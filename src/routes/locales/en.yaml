@@ -1,0 +1,46 @@
+today: Today is {$date :date}.
+date-short: "Short date: {$date :date length=short}."
+date-long: "Long date: {$date :date fields=|month-day-weekday| length=long}."
+datetime: "Appointment: {$date :datetime}."
+time: "The time is {$time :time}."
+time-precise: "Precise time: {$time :time precision=second}."
+notifications: |
+  .input {$count :integer}
+  .match $count
+    0   {{You have no notifications.}}
+    one {{You have {$count} notification.}}
+    *   {{You have {$count} notifications.}}
+items: |
+  .input {$count :integer}
+  .match $count
+    one {{Found {$count} item.}}
+    *   {{Found {$count} items.}}
+price: "Price: {$amount :currency currency=USD}."
+progress: "Progress: {$ratio :percent}."
+ranking: |
+  .input {$rank :number select=ordinal}
+  .match $rank
+    one   {{You are ranked {$rank}st.}}
+    two   {{You are ranked {$rank}nd.}}
+    few   {{You are ranked {$rank}rd.}}
+    *     {{You are ranked {$rank}th.}}
+decimal: "Value: {$num :number minimumFractionDigits=2}."
+signed: "Change: {$num :number signDisplay=always}."
+id: "ID: {$num :number minimumIntegerDigits=4}."
+party: |
+  .input {$hostGender :string}
+  .input {$guestCount :number}
+  .match $hostGender $guestCount
+    female 0   {{{$hostName} does not give a party.}}
+    female 1   {{{$hostName} invites {$guestName} to her party.}}
+    female *   {{{$hostName} invites {$guestCount} people, including {$guestName}, to her party.}}
+    male   0   {{{$hostName} does not give a party.}}
+    male   1   {{{$hostName} invites {$guestName} to his party.}}
+    male   *   {{{$hostName} invites {$guestCount} people, including {$guestName}, to his party.}}
+    *      0   {{{$hostName} does not give a party.}}
+    *      1   {{{$hostName} invites {$guestName} to their party.}}
+    *      *   {{{$hostName} invites {$guestCount} people, including {$guestName}, to their party.}}
+nav:
+  home: Home
+  about: About
+  contact: Contact

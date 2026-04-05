@@ -1,0 +1,9 @@
+cooldown: 1
+reject:
+  # Updating to ESLint 10 is blocked by some plugins, including:
+  # https://github.com/import-js/eslint-plugin-import/issues/3227
+  # https://github.com/eslint-config/airbnb-extended/issues/65
+  - eslint
+  - "@eslint/js"
+  # Updating to TypeScript 6 is blocked by Svelte, which currently supports up to TypeScript 5.9
+  - typescript

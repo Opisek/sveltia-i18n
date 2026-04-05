@@ -1,0 +1,44 @@
+today: "Dzisiaj jest {$date :date}."
+date-short: "Krótka data: {$date :date length=short}."
+date-long: "Długa data: {$date :date fields=|month-day-weekday| length=long}."
+datetime: "Spotkanie: {$date :datetime}."
+time: "Jest godzina {$time :time}."
+time-precise: "Dokładny czas: {$time :time precision=second}."
+notifications: |
+  .input {$count :integer}
+  .match $count
+    0   {{Nie masz żadnych powiadomień.}}
+    one {{Masz {$count} powiadomienie.}}
+    few {{Masz {$count} powiadomienia.}}
+    many {{Masz {$count} powiadomień.}}
+    *   {{Masz {$count} powiadomienia.}}
+items: |
+  .input {$count :integer}
+  .match $count
+    one  {{Znaleziono {$count} element.}}
+    few  {{Znaleziono {$count} elementy.}}
+    many {{Znaleziono {$count} elementów.}}
+    *    {{Znaleziono {$count} elementów.}}
+price: "Cena: {$amount :currency currency=PLN}."
+progress: "Postęp: {$ratio :percent}."
+ranking: "Jesteś na {$rank}. miejscu."
+decimal: "Wartość: {$num :number minimumFractionDigits=2}."
+signed: "Zmiana: {$num :number signDisplay=always}."
+id: "ID: {$num :number minimumIntegerDigits=4}."
+party: |
+  .input {$hostGender :string}
+  .input {$guestCount :number}
+  .match $hostGender $guestCount
+    female 0   {{{$hostName} nie organizuje przyjęcia.}}
+    female 1   {{{$hostName} zaprasza {$guestName} na swoje przyjęcie.}}
+    female *   {{{$hostName} zaprasza {$guestCount} gości, w tym {$guestName}, na swoje przyjęcie.}}
+    male   0   {{{$hostName} nie organizuje przyjęcia.}}
+    male   1   {{{$hostName} zaprasza {$guestName} na swoje przyjęcie.}}
+    male   *   {{{$hostName} zaprasza {$guestCount} gości, w tym {$guestName}, na swoje przyjęcie.}}
+    *      0   {{{$hostName} nie organizuje przyjęcia.}}
+    *      1   {{{$hostName} zaprasza {$guestName} na swoje przyjęcie.}}
+    *      *   {{{$hostName} zaprasza {$guestCount} gości, w tym {$guestName}, na swoje przyjęcie.}}
+nav:
+  home: Strona główna
+  about: O nas
+  contact: Kontakt
