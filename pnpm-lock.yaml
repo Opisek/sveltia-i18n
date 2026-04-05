@@ -81,9 +81,6 @@ importers:
       prettier-plugin-svelte:
         specifier: ^3.5.1
         version: 3.5.1(prettier@3.8.1)(svelte@5.55.1)
-      publint:
-        specifier: ^0.3.18
-        version: 0.3.18
       stylelint:
         specifier: ^17.6.0
         version: 17.6.0(typescript@5.9.3)
@@ -722,10 +719,6 @@ packages:
 
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
-
-  '@publint/pack@0.1.4':
-    resolution: {integrity: sha512-HDVTWq3H0uTXiU0eeSQntcVUTPP3GamzeXI41+x7uU9J65JgWQh3qWZHblR1i0npXfFtF+mxBiU2nJH8znxWnQ==}
-    engines: {node: '>=18'}
 
   '@rolldown/binding-android-arm64@1.0.0-rc.12':
     resolution: {integrity: sha512-pv1y2Fv0JybcykuiiD3qBOBdz6RteYojRFY1d+b95WVuzx211CRh+ytI/+9iVyWQ6koTh5dawe4S/yRfOFjgaA==}
@@ -2544,9 +2537,6 @@ packages:
     resolution: {integrity: sha512-RfUMqyBoLa1qcPsKNAksnVDRuzDvLi//RqfMbf52RNMKsm+cWR/3Cfe6hvrTS/ATtEwvtm/57dPggXsau6++uA==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
 
-  package-manager-detector@1.6.0:
-    resolution: {integrity: sha512-61A5ThoTiDG/C8s8UMZwSorAGwMJ0ERVGj2OjoW5pAalsNOg15+iQiPzrLJ4jhZ1HJzmC2PIHT2oEiH3R5fzNA==}
-
   parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
     engines: {node: '>=6'}
@@ -2662,11 +2652,6 @@ packages:
 
   prop-types@15.8.1:
     resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
-
-  publint@0.3.18:
-    resolution: {integrity: sha512-JRJFeBTrfx4qLwEuGFPk+haJOJN97KnPuK01yj+4k/Wj5BgoOK5uNsivporiqBjk2JDaslg7qJOhGRnpltGeog==}
-    engines: {node: '>=18'}
-    hasBin: true
 
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
@@ -3887,8 +3872,6 @@ snapshots:
   '@package-json/types@0.0.12': {}
 
   '@polka/url@1.0.0-next.29': {}
-
-  '@publint/pack@0.1.4': {}
 
   '@rolldown/binding-android-arm64@1.0.0-rc.12':
     optional: true
@@ -5875,8 +5858,6 @@ snapshots:
       validate-npm-package-license: 3.0.4
       validate-npm-package-name: 7.0.2
 
-  package-manager-detector@1.6.0: {}
-
   parent-module@1.0.1:
     dependencies:
       callsites: 3.1.0
@@ -5971,13 +5952,6 @@ snapshots:
       loose-envify: 1.4.0
       object-assign: 4.1.1
       react-is: 16.13.1
-
-  publint@0.3.18:
-    dependencies:
-      '@publint/pack': 0.1.4
-      package-manager-detector: 1.6.0
-      picocolors: 1.1.1
-      sade: 1.8.1
 
   punycode@2.3.1: {}
 
