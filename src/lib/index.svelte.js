@@ -155,6 +155,12 @@ const addMessages = (localeCode, ...maps) => {
       });
     });
   });
+
+  // Re-negotiate if locale.set() was called before any locales were registered.
+  if (_locale && !locales.includes(_locale)) {
+    // eslint-disable-next-line no-use-before-define
+    locale.set(_locale);
+  }
 };
 
 // --- Loader ---

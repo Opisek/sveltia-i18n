@@ -221,6 +221,16 @@ describe('addMessages', () => {
     expect(format('count')).toBe('42');
     expect(format('flag')).toBe('true');
   });
+
+  it('re-settles the locale when addMessages() is called after init()', () => {
+    init({ fallbackLocale: 'en', initialLocale: 'fr' });
+    expect(locale.current).toBe('fr'); // unresolved — no locales registered yet
+
+    addMessages('en', { hello: 'Hello!' });
+    expect(locale.current).toBe('en'); // should fall back to 'en'
+    expect(isLoading()).toBe(false);
+    expect(format('hello')).toBe('Hello!');
+  });
 });
 
 describe('format / _', () => {
