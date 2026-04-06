@@ -11,7 +11,7 @@ enableFiletypes:
   - xml
 files:
   - "**/.*"
-  - "**/*.{css,js,json,jsonc,html,md,scss,svelte,svg,yaml,yml,xml}"
+  - "**/*.{css,js,json,jsonc,html,md,svelte,svg,yaml,yml,xml}"
 useGitignore: true
 ignorePaths:
   - pnpm-lock.yaml
