@@ -242,6 +242,12 @@ const negotiateLocale = (requested, available) => {
   }
 };
 
+let fallbackLocale = '';
+/** @type {MissingKeyHandler | undefined} */
+let missingMessageHandler;
+/** @type {Formats} */
+let customFormats = {};
+
 /**
  * Current locale.
  */
@@ -260,7 +266,12 @@ const locale = {
    * @returns {Promise<void>}
    */
   set(value) {
-    const resolved = locales.length ? negotiateLocale(value, locales) : value;
+    let resolved = locales.length ? negotiateLocale(value, locales) : value;
+
+    // If no registered locale matched, fall back to fallbackLocale.
+    if (value && locales.length && !locales.includes(resolved) && fallbackLocale) {
+      resolved = negotiateLocale(fallbackLocale, locales);
+    }
 
     _locale = resolved;
 
@@ -336,12 +347,6 @@ const getLocaleFromHash = (hashKey) => {
 };
 
 // --- Configuration ---
-
-let fallbackLocale = '';
-/** @type {MissingKeyHandler | undefined} */
-let missingMessageHandler;
-/** @type {Formats} */
-let customFormats = {};
 
 /**
  * Initialize the locales.

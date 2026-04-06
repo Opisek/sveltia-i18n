@@ -160,6 +160,12 @@ describe('init', () => {
     expect(locale.current).toBe('fr');
   });
 
+  it('falls back to fallbackLocale when initialLocale is not a registered locale', () => {
+    addMessages('en-US', { hello: 'Hello!' });
+    init({ fallbackLocale: 'en-US', initialLocale: 'fr' });
+    expect(locale.current).toBe('en-US');
+  });
+
   it('does not change locale when initialLocale is omitted', () => {
     init({ fallbackLocale: 'en-US' });
     expect(locale.current).toBe('');
