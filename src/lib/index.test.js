@@ -824,6 +824,18 @@ describe('register + waitLocale', () => {
     locale.set('it');
     expect(format('ciao')).toBe('Ciao');
   });
+
+  it('re-settles the locale when register() is called after init()', async () => {
+    init({ fallbackLocale: 'en', initialLocale: 'fr' });
+    expect(locale.current).toBe('fr'); // unresolved — no locales registered yet
+
+    register('en', () => Promise.resolve({ hello: 'Hello!' }));
+    expect(locale.current).toBe('en'); // should fall back to 'en'
+
+    await waitLocale();
+    expect(isLoading()).toBe(false);
+    expect(format('hello')).toBe('Hello!');
+  });
 });
 
 // ---------------------------------------------------------------------------

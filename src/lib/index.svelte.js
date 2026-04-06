@@ -165,22 +165,6 @@ const loaderQueue = new SvelteMap();
 const loaderPromises = new SvelteMap();
 
 /**
- * Register an async loader for a locale. The loader is called the first time
- * `waitLocale(localeCode)` is invoked for that locale.
- * @param {string} localeCode Locale.
- * @param {() => Promise<Record<string, string>>} loader Function returning a message map.
- */
-const register = (localeCode, loader) => {
-  loaderQueue.set(localeCode, loader);
-  // Invalidate any cached promise so the new loader is picked up on next waitLocale call.
-  loaderPromises.delete(localeCode);
-
-  if (!locales.includes(localeCode)) {
-    locales.push(localeCode);
-  }
-};
-
-/**
  * Execute the registered loader for the given locale (or the current locale if omitted) and wait
  * until the messages are loaded. Subsequent calls for the same locale return the same promise.
  * @param {string} [localeCode] Defaults to `locale.current`.
@@ -289,6 +273,27 @@ const locale = {
 
     return waitLocale(resolved);
   },
+};
+
+/**
+ * Register an async loader for a locale. The loader is called the first time
+ * `waitLocale(localeCode)` is invoked for that locale.
+ * @param {string} localeCode Locale.
+ * @param {() => Promise<Record<string, string>>} loader Function returning a message map.
+ */
+const register = (localeCode, loader) => {
+  loaderQueue.set(localeCode, loader);
+  // Invalidate any cached promise so the new loader is picked up on next waitLocale call.
+  loaderPromises.delete(localeCode);
+
+  if (!locales.includes(localeCode)) {
+    locales.push(localeCode);
+  }
+
+  // Re-negotiate if locale.set() was called before any locales were registered.
+  if (_locale && !locales.includes(_locale)) {
+    locale.set(_locale);
+  }
 };
 
 /**
