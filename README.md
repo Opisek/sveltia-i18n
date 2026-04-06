@@ -48,6 +48,7 @@ An internationalization (i18n) library for Svelte applications. Heavily inspired
 - [Compatibility with svelte-i18n](#svelte-i18n-compatibility)
   - [Functions](#functions)
   - [Key differences](#key-differences)
+- [Examples](#examples)
 
 ## Installation
 
@@ -551,11 +552,11 @@ Polish has four plural forms — `one`, `few` (2–4, except teens), `many` (5+,
 notifications: |
   .input {$count :integer}
   .match $count
-    0   {{Nie masz żadnych powiadomień.}}
-    one {{Masz {$count} powiadomienie.}}
-    few {{Masz {$count} powiadomienia.}}
+    0    {{Nie masz żadnych powiadomień.}}
+    one  {{Masz {$count} powiadomienie.}}
+    few  {{Masz {$count} powiadomienia.}}
     many {{Masz {$count} powiadomień.}}
-    *   {{Masz {$count} powiadomienia.}}
+    *    {{Masz {$count} powiadomienia.}}
 
 items: |
   .input {$count :integer}
@@ -707,3 +708,10 @@ Sveltia I18n is designed to be a modern alternative to [svelte-i18n](https://git
 
 - **Message format**: svelte-i18n uses its own `{variable}` interpolation syntax (with optional ICU-style pluralization via `intl-messageformat`). Sveltia I18n uses [Unicode MessageFormat 2 (MF2)](https://messageformat.unicode.org/) syntax exclusively, which is not backwards-compatible. Locale files need to be migrated.
 - **Reactivity model**: svelte-i18n exposes Svelte stores. Sveltia I18n uses Svelte 5 Runes (`$state`). Wrap in a reactive context (e.g. `$derived`) or call directly in templates — no `$`-prefix auto-subscription needed.
+
+## Examples
+
+We developed Sveltia I18n to address our needs for internationalization in Svelte applications. It’s currently being used in the following production projects:
+
+- [Sveltia CMS](https://github.com/sveltia/sveltia-cms) — [migration commit](https://github.com/sveltia/sveltia-cms/commit/6d19e25ef102c0b39e26eefdb86ae05bb09f2cf3)
+- [Sveltia UI](https://github.com/sveltia/sveltia-ui) — also powers Sveltia CMS — [migration commit](https://github.com/sveltia/sveltia-ui/commit/71e3a5fdf6f04bd0dbcafa464292fdef4d5b78dc)
