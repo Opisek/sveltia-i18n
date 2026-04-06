@@ -61,6 +61,21 @@ const dictionary = $state({});
  */
 const isLoading = () => !!_locale && !dictionary[_locale];
 
+// --- Configuration state ---
+
+/** Locale to fall back to when the active locale has no entry for a key. */
+// eslint-disable-next-line padding-line-between-statements
+let fallbackLocale = '';
+/**
+ * Negotiated fallback locale — pre-computed from `fallbackLocale` against the registered locales.
+ * Cached to avoid repeated `Intl.Locale` construction on every `format()` call.
+ */
+let _resolvedFallback = '';
+/** @type {MissingKeyHandler | undefined} */
+let missingMessageHandler;
+/** @type {Formats} */
+let customFormats = {};
+
 // Languages written right-to-left; used as a fallback when Intl.Locale.textInfo is not available
 // (e.g. Firefox).
 const RTL_LANGS = new Set([
@@ -114,6 +129,34 @@ const isRTL = () => {
 // --- Messages ---
 
 /**
+ * Negotiate the best available locale for a requested tag.
+ * 1. Exact match  2. Same language subtag (e.g. En-CA → en-US)  3. Original value.
+ * @param {string} requested The requested locale tag.
+ * @param {string[]} available List of available locale codes.
+ * @returns {string} The best-matching available locale, or `requested` if no match is found.
+ */
+const negotiateLocale = (requested, available) => {
+  if (!requested || !available.length) return requested;
+  if (available.includes(requested)) return requested;
+
+  try {
+    const lang = new Intl.Locale(requested).language;
+
+    return (
+      available.find((l) => {
+        try {
+          return new Intl.Locale(l).language === lang;
+        } catch {
+          return false;
+        }
+      }) ?? requested
+    );
+  } catch {
+    return requested;
+  }
+};
+
+/**
  * Recursively flatten a nested message map into dot-separated keys. `{ field: { name: 'Name' } }` →
  * `{ 'field.name': 'Name' }` Top-level keys that already contain dots are preserved as-is.
  * @param {Record<string, any>} map Nested or flat message map to flatten.
@@ -159,6 +202,7 @@ const addMessages = (localeCode, ...maps) => {
 
   if (!locales.includes(localeCode)) {
     locales.push(localeCode);
+    _resolvedFallback = negotiateLocale(fallbackLocale, locales);
   }
 
   dictionary[localeCode] ??= {};
@@ -225,40 +269,6 @@ const waitLocale = (localeCode = _locale) => {
 // --- Locale ---
 
 /**
- * Negotiate the best available locale for a requested tag.
- * 1. Exact match  2. Same language subtag (e.g. En-CA → en-US)  3. Original value.
- * @param {string} requested The requested locale tag.
- * @param {string[]} available List of available locale codes.
- * @returns {string} The best-matching available locale, or `requested` if no match is found.
- */
-const negotiateLocale = (requested, available) => {
-  if (!requested || !available.length) return requested;
-  if (available.includes(requested)) return requested;
-
-  try {
-    const lang = new Intl.Locale(requested).language;
-
-    return (
-      available.find((l) => {
-        try {
-          return new Intl.Locale(l).language === lang;
-        } catch {
-          return false;
-        }
-      }) ?? requested
-    );
-  } catch {
-    return requested;
-  }
-};
-
-let fallbackLocale = '';
-/** @type {MissingKeyHandler | undefined} */
-let missingMessageHandler;
-/** @type {Formats} */
-let customFormats = {};
-
-/**
  * Current locale.
  */
 const locale = {
@@ -285,7 +295,7 @@ const locale = {
 
     // If no registered locale matched, fall back to fallbackLocale.
     if (value && locales.length && !locales.includes(resolved) && fallbackLocale) {
-      resolved = negotiateLocale(fallbackLocale, locales);
+      resolved = _resolvedFallback;
     }
 
     _locale = resolved;
@@ -330,6 +340,7 @@ const register = (localeCode, loader) => {
 
   if (!locales.includes(localeCode)) {
     locales.push(localeCode);
+    _resolvedFallback = negotiateLocale(fallbackLocale, locales);
   }
 
   // Re-negotiate if locale.set() was called before any locales were registered.
@@ -456,6 +467,7 @@ const init = (args) => {
   }
 
   fallbackLocale = args.fallbackLocale;
+  _resolvedFallback = negotiateLocale(fallbackLocale, locales);
   missingMessageHandler = args.handleMissingMessage;
   customFormats = args.formats ?? {};
   if (args.initialLocale) locale.set(args.initialLocale);
@@ -489,7 +501,7 @@ const format = (key, { values = {}, locale: localeOverride, default: defaultStri
   }
 
   const active = localeOverride ?? _locale;
-  const fallback = locales.length ? negotiateLocale(fallbackLocale, locales) : fallbackLocale;
+  const fallback = _resolvedFallback;
 
   const result =
     dictionary[active]?.[key]?.format(values) ??
@@ -521,7 +533,7 @@ const json = (prefix, { locale: localeOverride } = {}) => {
   }
 
   const active = localeOverride ?? _locale;
-  const fallback = locales.length ? negotiateLocale(fallbackLocale, locales) : fallbackLocale;
+  const fallback = _resolvedFallback;
   const source = dictionary[active] ?? dictionary[fallback] ?? {};
   const pfx = `${prefix}.`;
   const result = /** @type {Record<string, string>} */ ({});
