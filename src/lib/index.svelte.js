@@ -177,6 +177,18 @@ const flattenMessages = (map, prefix = '') =>
   }, /** @type {Record<string, string>} */ (Object.create(null)));
 
 /**
+ * Register a locale code in `locales` (if not already present) and refresh `_resolvedFallback`.
+ * Shared by {@link addMessages} and {@link register}.
+ * @param {string} localeCode Locale code to register.
+ */
+const registerLocaleCode = (localeCode) => {
+  if (!locales.includes(localeCode)) {
+    locales.push(localeCode);
+    _resolvedFallback = negotiateLocale(fallbackLocale, locales);
+  }
+};
+
+/**
  * Add new messages for a locale. Accepts flat or nested maps; nested objects are flattened to
  * dot-separated keys (`field.name`). Multiple dicts can be passed and are merged in order, matching
  * svelte-i18n's `addMessages(locale, ...dicts)` signature.
@@ -200,11 +212,7 @@ const addMessages = (localeCode, ...maps) => {
     }
   });
 
-  if (!locales.includes(localeCode)) {
-    locales.push(localeCode);
-    _resolvedFallback = negotiateLocale(fallbackLocale, locales);
-  }
-
+  registerLocaleCode(localeCode);
   dictionary[localeCode] ??= Object.create(null);
 
   maps.forEach((map) => {
@@ -338,10 +346,7 @@ const register = (localeCode, loader) => {
   // Invalidate any cached promise so the new loader is picked up on next waitLocale call.
   loaderPromises.delete(localeCode);
 
-  if (!locales.includes(localeCode)) {
-    locales.push(localeCode);
-    _resolvedFallback = negotiateLocale(fallbackLocale, locales);
-  }
+  registerLocaleCode(localeCode);
 
   // Re-negotiate if locale.set() was called before any locales were registered.
   if (_locale && !locales.includes(_locale)) {
@@ -577,22 +582,34 @@ const BUILT_IN_NUMBER_FORMATS = {
 };
 
 /**
+ * Shared implementation for {@link date} and {@link time}.
+ * @param {'date' | 'time'} kind `'date'` or `'time'`, selects the format table and error label.
+ * @param {Date} value The date to format.
+ * @param {DateFormatOptions} [options] Formatting options.
+ * @returns {string} The formatted string.
+ * @throws {TypeError} If `value` is not a `Date` instance.
+ */
+const formatDateTimeValue = (kind, value, options = {}) => {
+  const { locale: loc, format: fmt, ...rest } = options;
+
+  if (!(value instanceof Date)) {
+    throw new TypeError(`${kind}: value must be a Date instance (got ${typeof value})`);
+  }
+
+  const builtIn = kind === 'date' ? BUILT_IN_DATE_FORMATS : BUILT_IN_TIME_FORMATS;
+  const named = fmt ? (customFormats[kind]?.[fmt] ?? builtIn[fmt] ?? {}) : {};
+
+  return new Intl.DateTimeFormat(loc ?? _locale, { ...named, ...rest }).format(value);
+};
+
+/**
  * Format a date value as a localized date string.
  * @param {Date} value The date to format.
  * @param {DateFormatOptions} [options] Formatting options.
  * @returns {string} The formatted date string.
  * @throws {TypeError} If `value` is not a `Date` instance.
  */
-const date = (value, { locale: loc, format: fmt, ...rest } = {}) => {
-  if (!(value instanceof Date)) {
-    throw new TypeError(`date: value must be a Date instance (got ${typeof value})`);
-  }
-
-  const named = fmt ? (customFormats.date?.[fmt] ?? BUILT_IN_DATE_FORMATS[fmt] ?? {}) : {};
-
-  return new Intl.DateTimeFormat(loc ?? _locale, { ...named, ...rest }).format(value);
-};
-
+const date = (value, options = {}) => formatDateTimeValue('date', value, options);
 /**
  * Format a date value as a localized time string.
  * @param {Date} value The date to format.
@@ -600,15 +617,7 @@ const date = (value, { locale: loc, format: fmt, ...rest } = {}) => {
  * @returns {string} The formatted time string.
  * @throws {TypeError} If `value` is not a `Date` instance.
  */
-const time = (value, { locale: loc, format: fmt, ...rest } = {}) => {
-  if (!(value instanceof Date)) {
-    throw new TypeError(`time: value must be a Date instance (got ${typeof value})`);
-  }
-
-  const named = fmt ? (customFormats.time?.[fmt] ?? BUILT_IN_TIME_FORMATS[fmt] ?? {}) : {};
-
-  return new Intl.DateTimeFormat(loc ?? _locale, { ...named, ...rest }).format(value);
-};
+const time = (value, options = {}) => formatDateTimeValue('time', value, options);
 
 /**
  * Format a number as a localized string.
