@@ -390,7 +390,7 @@ const format = (key, { values = {}, locale: localeOverride, default: defaultStri
   }
 
   const active = localeOverride ?? _locale;
-  const fallback = fallbackLocale;
+  const fallback = locales.length ? negotiateLocale(fallbackLocale, locales) : fallbackLocale;
 
   const result =
     dictionary[active]?.[key]?.format(values) ??
@@ -417,7 +417,7 @@ const format = (key, { values = {}, locale: localeOverride, default: defaultStri
  */
 const json = (prefix, { locale: localeOverride } = {}) => {
   const active = localeOverride ?? _locale;
-  const fallback = fallbackLocale;
+  const fallback = locales.length ? negotiateLocale(fallbackLocale, locales) : fallbackLocale;
   const source = dictionary[active] ?? dictionary[fallback] ?? {};
   const pfx = `${prefix}.`;
   const result = /** @type {Record<string, string>} */ ({});

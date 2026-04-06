@@ -257,6 +257,21 @@ describe('format / _', () => {
     expect(format('hello')).toBe('Hello!');
   });
 
+  it('resolves fallbackLocale subtag when looking up missing keys (en → en-US)', () => {
+    // fallbackLocale is 'en' but messages are stored under 'en-US'
+    addMessages('fr', { world: 'Monde' });
+    init({ fallbackLocale: 'en', initialLocale: 'fr' });
+    expect(format('hello')).toBe('Hello!');
+  });
+
+  it('resolves fallbackLocale subtag when looking up missing keys (en-US → en)', () => {
+    addMessages('en', { hello: 'Hello!' });
+    addMessages('fr', { world: 'Monde' });
+    init({ fallbackLocale: 'en-US', initialLocale: 'fr' });
+    locale.set('fr');
+    expect(format('hello')).toBe('Hello!');
+  });
+
   it('prefers the active locale over the fallback', () => {
     addMessages('fr', { hello: 'Bonjour !' });
     locale.set('fr');
