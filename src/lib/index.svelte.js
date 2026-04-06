@@ -174,7 +174,7 @@ const flattenMessages = (map, prefix = '') =>
     }
 
     return acc;
-  }, /** @type {Record<string, string>} */ ({}));
+  }, /** @type {Record<string, string>} */ (Object.create(null)));
 
 /**
  * Add new messages for a locale. Accepts flat or nested maps; nested objects are flattened to
@@ -205,7 +205,7 @@ const addMessages = (localeCode, ...maps) => {
     _resolvedFallback = negotiateLocale(fallbackLocale, locales);
   }
 
-  dictionary[localeCode] ??= {};
+  dictionary[localeCode] ??= Object.create(null);
 
   maps.forEach((map) => {
     Object.entries(flattenMessages(map)).forEach(([key, value]) => {
