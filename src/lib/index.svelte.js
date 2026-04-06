@@ -139,9 +139,24 @@ const flattenMessages = (map, prefix = '') =>
  * svelte-i18n's `addMessages(locale, ...dicts)` signature.
  * @param {string} localeCode Locale.
  * @param {...Record<string, any>} maps One or more message maps (flat or nested).
+ * @throws {TypeError} If `localeCode` is not a non-empty string or any map is not a plain object.
  * @see https://messageformat.github.io/messageformat/api/messageformat.messageformat/
  */
 const addMessages = (localeCode, ...maps) => {
+  if (typeof localeCode !== 'string' || !localeCode) {
+    throw new TypeError(
+      `addMessages: localeCode must be a non-empty string (got ${JSON.stringify(localeCode)})`,
+    );
+  }
+
+  maps.forEach((map, i) => {
+    if (map === null || typeof map !== 'object' || Array.isArray(map)) {
+      throw new TypeError(
+        `addMessages: maps[${i}] must be a plain object (got ${Array.isArray(map) ? 'array' : typeof map})`,
+      );
+    }
+  });
+
   if (!locales.includes(localeCode)) {
     locales.push(localeCode);
   }
@@ -175,8 +190,13 @@ const loaderPromises = new SvelteMap();
  * until the messages are loaded. Subsequent calls for the same locale return the same promise.
  * @param {string} [localeCode] Defaults to `locale.current`.
  * @returns {Promise<void>}
+ * @throws {TypeError} If `localeCode` is provided and is not a string.
  */
 const waitLocale = (localeCode = _locale) => {
+  if (typeof localeCode !== 'string') {
+    throw new TypeError(`waitLocale: localeCode must be a string (got ${typeof localeCode})`);
+  }
+
   if (!localeCode) return Promise.resolve();
 
   if (!loaderPromises.has(localeCode)) {
@@ -254,8 +274,13 @@ const locale = {
    * `<html lang>` / `<html dir>`, and auto-triggers any registered loader.
    * @param {string} value The locale to set.
    * @returns {Promise<void>}
+   * @throws {TypeError} If `value` is not a string.
    */
   set(value) {
+    if (typeof value !== 'string') {
+      throw new TypeError(`locale.set: value must be a string (got ${typeof value})`);
+    }
+
     let resolved = locales.length ? negotiateLocale(value, locales) : value;
 
     // If no registered locale matched, fall back to fallbackLocale.
@@ -286,8 +311,19 @@ const locale = {
  * `waitLocale(localeCode)` is invoked for that locale.
  * @param {string} localeCode Locale.
  * @param {() => Promise<Record<string, string>>} loader Function returning a message map.
+ * @throws {TypeError} If `localeCode` is not a non-empty string or `loader` is not a function.
  */
 const register = (localeCode, loader) => {
+  if (typeof localeCode !== 'string' || !localeCode) {
+    throw new TypeError(
+      `register: localeCode must be a non-empty string (got ${JSON.stringify(localeCode)})`,
+    );
+  }
+
+  if (typeof loader !== 'function') {
+    throw new TypeError(`register: loader must be a function (got ${typeof loader})`);
+  }
+
   loaderQueue.set(localeCode, loader);
   // Invalidate any cached promise so the new loader is picked up on next waitLocale call.
   loaderPromises.delete(localeCode);
@@ -315,41 +351,73 @@ const getLocaleFromNavigator = () =>
  * @param {RegExp} hostnamePattern Pattern with a capture group for the locale code.
  * @returns {string | undefined} The matched locale code, or `undefined` if not in a browser or no
  * match.
+ * @throws {TypeError} If `hostnamePattern` is not a `RegExp`.
  */
-const getLocaleFromHostname = (hostnamePattern) =>
-  typeof window === 'undefined' || !window.location
+const getLocaleFromHostname = (hostnamePattern) => {
+  if (!(hostnamePattern instanceof RegExp)) {
+    throw new TypeError(
+      `getLocaleFromHostname: hostnamePattern must be a RegExp (got ${typeof hostnamePattern})`,
+    );
+  }
+
+  return typeof window === 'undefined' || !window.location
     ? undefined
     : window.location.hostname.match(hostnamePattern)?.[1];
+};
 
 /**
  * Get the locale from a pattern matched against `window.location.pathname`.
  * @param {RegExp} pathnamePattern Pattern with a capture group for the locale code.
  * @returns {string | undefined} The matched locale code, or `undefined` if not in a browser or no
  * match.
+ * @throws {TypeError} If `pathnamePattern` is not a `RegExp`.
  */
-const getLocaleFromPathname = (pathnamePattern) =>
-  typeof window === 'undefined' || !window.location
+const getLocaleFromPathname = (pathnamePattern) => {
+  if (!(pathnamePattern instanceof RegExp)) {
+    throw new TypeError(
+      `getLocaleFromPathname: pathnamePattern must be a RegExp (got ${typeof pathnamePattern})`,
+    );
+  }
+
+  return typeof window === 'undefined' || !window.location
     ? undefined
     : window.location.pathname.match(pathnamePattern)?.[1];
+};
 
 /**
  * Get the locale from a URL query string parameter.
  * @param {string} queryKey The query string key to read.
  * @returns {string | undefined} The query parameter value, or `undefined` if not in a browser or
  * not found.
+ * @throws {TypeError} If `queryKey` is not a non-empty string.
  */
-const getLocaleFromQueryString = (queryKey) =>
-  typeof window === 'undefined' || !window.location
+const getLocaleFromQueryString = (queryKey) => {
+  if (typeof queryKey !== 'string' || !queryKey) {
+    throw new TypeError(
+      // eslint-disable-next-line max-len
+      `getLocaleFromQueryString: queryKey must be a non-empty string (got ${JSON.stringify(queryKey)})`,
+    );
+  }
+
+  return typeof window === 'undefined' || !window.location
     ? undefined
     : (new SvelteURLSearchParams(window.location.search).get(queryKey) ?? undefined);
+};
 
 /**
  * Get the locale from a `key=value` pair in `window.location.hash`.
  * @param {string} hashKey The key to look for in the hash.
  * @returns {string | undefined} The hash parameter value, or `undefined` if not in a browser or not
  * found.
+ * @throws {TypeError} If `hashKey` is not a non-empty string.
  */
 const getLocaleFromHash = (hashKey) => {
+  if (typeof hashKey !== 'string' || !hashKey) {
+    throw new TypeError(
+      `getLocaleFromHash: hashKey must be a non-empty string (got ${JSON.stringify(hashKey)})`,
+    );
+  }
+
   if (typeof window === 'undefined' || !window.location) return undefined;
 
   const params = new SvelteURLSearchParams(window.location.hash.replace(/^#/, ''));
@@ -367,8 +435,26 @@ const getLocaleFromHash = (hashKey) => {
  * @param {Formats} [args.formats] Custom named formats.
  * @param {MissingKeyHandler} [args.handleMissingMessage] Called when a message key is not found.
  * May return a string to use as a fallback.
+ * @throws {TypeError} If `args.fallbackLocale` is not a string, `args.initialLocale` is not a
+ * string, or `args.handleMissingMessage` is not a function.
  */
 const init = (args) => {
+  if (!args || typeof args.fallbackLocale !== 'string') {
+    throw new TypeError(
+      `init: fallbackLocale must be a string (got ${JSON.stringify(args?.fallbackLocale)})`,
+    );
+  }
+
+  if (args.initialLocale !== undefined && typeof args.initialLocale !== 'string') {
+    throw new TypeError(`init: initialLocale must be a string (got ${typeof args.initialLocale})`);
+  }
+
+  if (args.handleMissingMessage !== undefined && typeof args.handleMissingMessage !== 'function') {
+    throw new TypeError(
+      `init: handleMissingMessage must be a function (got ${typeof args.handleMissingMessage})`,
+    );
+  }
+
   fallbackLocale = args.fallbackLocale;
   missingMessageHandler = args.handleMissingMessage;
   customFormats = args.formats ?? {};
@@ -387,8 +473,15 @@ const init = (args) => {
  * @param {{ values?: Record<string, any>, locale?: string, default?: string }} [options] Formatting
  * options when `key` is a string.
  * @returns {string} The formatted message string.
+ * @throws {TypeError} If `key` is `null` or `undefined`.
  */
 const format = (key, { values = {}, locale: localeOverride, default: defaultString } = {}) => {
+  if (key === null || key === undefined) {
+    throw new TypeError(
+      `format: key must be a string or message object (got ${JSON.stringify(key)})`,
+    );
+  }
+
   if (typeof key === 'object') {
     const { id, values: v = {}, locale: l, default: d } = key;
 
@@ -420,8 +513,13 @@ const format = (key, { values = {}, locale: localeOverride, default: defaultStri
  * @param {{ locale?: string }} [options] Lookup options.
  * @returns {Record<string, string> | undefined} Object mapping suffix keys to formatted strings, or
  * `undefined` if no keys match the prefix.
+ * @throws {TypeError} If `prefix` is not a non-empty string.
  */
 const json = (prefix, { locale: localeOverride } = {}) => {
+  if (typeof prefix !== 'string' || !prefix) {
+    throw new TypeError(`json: prefix must be a non-empty string (got ${JSON.stringify(prefix)})`);
+  }
+
   const active = localeOverride ?? _locale;
   const fallback = locales.length ? negotiateLocale(fallbackLocale, locales) : fallbackLocale;
   const source = dictionary[active] ?? dictionary[fallback] ?? {};
@@ -471,8 +569,13 @@ const BUILT_IN_NUMBER_FORMATS = {
  * @param {Date} value The date to format.
  * @param {DateFormatOptions} [options] Formatting options.
  * @returns {string} The formatted date string.
+ * @throws {TypeError} If `value` is not a `Date` instance.
  */
 const date = (value, { locale: loc, format: fmt, ...rest } = {}) => {
+  if (!(value instanceof Date)) {
+    throw new TypeError(`date: value must be a Date instance (got ${typeof value})`);
+  }
+
   const named = fmt ? (customFormats.date?.[fmt] ?? BUILT_IN_DATE_FORMATS[fmt] ?? {}) : {};
 
   return new Intl.DateTimeFormat(loc ?? _locale, { ...named, ...rest }).format(value);
@@ -483,8 +586,13 @@ const date = (value, { locale: loc, format: fmt, ...rest } = {}) => {
  * @param {Date} value The date to format.
  * @param {DateFormatOptions} [options] Formatting options.
  * @returns {string} The formatted time string.
+ * @throws {TypeError} If `value` is not a `Date` instance.
  */
 const time = (value, { locale: loc, format: fmt, ...rest } = {}) => {
+  if (!(value instanceof Date)) {
+    throw new TypeError(`time: value must be a Date instance (got ${typeof value})`);
+  }
+
   const named = fmt ? (customFormats.time?.[fmt] ?? BUILT_IN_TIME_FORMATS[fmt] ?? {}) : {};
 
   return new Intl.DateTimeFormat(loc ?? _locale, { ...named, ...rest }).format(value);
@@ -495,8 +603,13 @@ const time = (value, { locale: loc, format: fmt, ...rest } = {}) => {
  * @param {number} value The number to format.
  * @param {NumberFormatOptions} [options] Formatting options.
  * @returns {string} The formatted number string.
+ * @throws {TypeError} If `value` is not a number.
  */
 const number = (value, { locale: loc, format: fmt, ...rest } = {}) => {
+  if (typeof value !== 'number') {
+    throw new TypeError(`number: value must be a number (got ${typeof value})`);
+  }
+
   const named = fmt ? (customFormats.number?.[fmt] ?? BUILT_IN_NUMBER_FORMATS[fmt] ?? {}) : {};
 
   return new Intl.NumberFormat(loc ?? _locale, { ...named, ...rest }).format(value);

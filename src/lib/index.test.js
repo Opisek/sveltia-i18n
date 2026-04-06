@@ -46,6 +46,11 @@ describe('locale', () => {
     locale.set('en-US');
     expect(locale.current).toBe('en-US');
   });
+
+  it('throws when value is not a string', () => {
+    expect(() => locale.set(/** @type {any} */ (null))).toThrow(TypeError);
+    expect(() => locale.set(/** @type {any} */ (42))).toThrow(TypeError);
+  });
 });
 
 describe('isLoading', () => {
@@ -181,6 +186,30 @@ describe('init', () => {
     expect(format('hello')).toBe('Bonjour !');
     expect(dictionary['en-US'].hello).toBeDefined();
   });
+
+  it('throws when fallbackLocale is not a string', () => {
+    expect(() => init(/** @type {any} */ ({ fallbackLocale: null }))).toThrow(TypeError);
+    expect(() => init(/** @type {any} */ ({ fallbackLocale: 42 }))).toThrow(TypeError);
+    expect(() => init(/** @type {any} */ ({}))).toThrow(TypeError);
+  });
+
+  it('throws when initialLocale is not a string', () => {
+    expect(() => init(/** @type {any} */ ({ fallbackLocale: 'en', initialLocale: 42 }))).toThrow(
+      TypeError,
+    );
+    expect(() => init(/** @type {any} */ ({ fallbackLocale: 'en', initialLocale: null }))).toThrow(
+      TypeError,
+    );
+  });
+
+  it('throws when handleMissingMessage is not a function', () => {
+    expect(() =>
+      init(/** @type {any} */ ({ fallbackLocale: 'en', handleMissingMessage: 'handler' })),
+    ).toThrow(TypeError);
+    expect(() =>
+      init(/** @type {any} */ ({ fallbackLocale: 'en', handleMissingMessage: 42 })),
+    ).toThrow(TypeError);
+  });
 });
 
 describe('addMessages', () => {
@@ -220,6 +249,19 @@ describe('addMessages', () => {
     locale.set('en-US');
     expect(format('count')).toBe('42');
     expect(format('flag')).toBe('true');
+  });
+
+  it('throws when localeCode is not a non-empty string', () => {
+    expect(() => addMessages(/** @type {any} */ (null), {})).toThrow(TypeError);
+    expect(() => addMessages(/** @type {any} */ (42), {})).toThrow(TypeError);
+    expect(() => addMessages('', {})).toThrow(TypeError);
+  });
+
+  it('throws when a map is not a plain object', () => {
+    expect(() => addMessages('en', /** @type {any} */ (null))).toThrow(TypeError);
+    expect(() => addMessages('en', /** @type {any} */ ('string'))).toThrow(TypeError);
+    expect(() => addMessages('en', /** @type {any} */ ([{ a: '1' }]))).toThrow(TypeError);
+    expect(() => addMessages('en', {}, /** @type {any} */ (42))).toThrow(TypeError);
   });
 
   it('re-settles the locale when addMessages() is called after init()', () => {
@@ -305,6 +347,11 @@ describe('format / _', () => {
 
   it('object-first signature returns default for missing key', () => {
     expect(format({ id: 'missing', default: 'N/A' })).toBe('N/A');
+  });
+
+  it('throws when key is null or undefined', () => {
+    expect(() => format(/** @type {any} */ (null))).toThrow(TypeError);
+    expect(() => format(/** @type {any} */ (undefined))).toThrow(TypeError);
   });
 });
 
@@ -814,6 +861,11 @@ describe('register + waitLocale', () => {
     await expect(waitLocale('')).resolves.toBeUndefined();
   });
 
+  it('throws when localeCode is not a string', async () => {
+    expect(() => waitLocale(/** @type {any} */ (42))).toThrow(TypeError);
+    expect(() => waitLocale(/** @type {any} */ (null))).toThrow(TypeError);
+  });
+
   it('uses the current locale when called with no argument', async () => {
     register('ro', () => Promise.resolve({ buna: 'Bună' }));
     await locale.set('ro');
@@ -861,6 +913,16 @@ describe('register + waitLocale', () => {
     expect(isLoading()).toBe(false);
     expect(format('hello')).toBe('Hello!');
   });
+
+  it('throws when localeCode is not a non-empty string', () => {
+    expect(() => register(/** @type {any} */ (null), () => Promise.resolve({}))).toThrow(TypeError);
+    expect(() => register('', () => Promise.resolve({}))).toThrow(TypeError);
+  });
+
+  it('throws when loader is not a function', () => {
+    expect(() => register('en', /** @type {any} */ ('not-a-function'))).toThrow(TypeError);
+    expect(() => register('en', /** @type {any} */ (null))).toThrow(TypeError);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -884,6 +946,11 @@ describe('getLocaleFromHostname', () => {
     vi.stubGlobal('location', undefined);
     expect(getLocaleFromHostname(/^(.*?)\./)).toBeUndefined();
     vi.unstubAllGlobals();
+  });
+
+  it('throws when hostnamePattern is not a RegExp', () => {
+    expect(() => getLocaleFromHostname(/** @type {any} */ ('fr\\.'))).toThrow(TypeError);
+    expect(() => getLocaleFromHostname(/** @type {any} */ (null))).toThrow(TypeError);
   });
 });
 
@@ -919,6 +986,11 @@ describe('getLocaleFromPathname', () => {
     expect(getLocaleFromPathname(/^\/([.\w-]+)\//)).toBeUndefined();
     vi.unstubAllGlobals();
   });
+
+  it('throws when pathnamePattern is not a RegExp', () => {
+    expect(() => getLocaleFromPathname(/** @type {any} */ ('/en/.*'))).toThrow(TypeError);
+    expect(() => getLocaleFromPathname(/** @type {any} */ (null))).toThrow(TypeError);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -953,6 +1025,11 @@ describe('getLocaleFromQueryString', () => {
     expect(getLocaleFromQueryString('lang')).toBeUndefined();
     vi.unstubAllGlobals();
   });
+
+  it('throws when queryKey is not a non-empty string', () => {
+    expect(() => getLocaleFromQueryString(/** @type {any} */ (null))).toThrow(TypeError);
+    expect(() => getLocaleFromQueryString('')).toThrow(TypeError);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -986,6 +1063,11 @@ describe('getLocaleFromHash', () => {
     vi.stubGlobal('location', undefined);
     expect(getLocaleFromHash('lang')).toBeUndefined();
     vi.unstubAllGlobals();
+  });
+
+  it('throws when hashKey is not a non-empty string', () => {
+    expect(() => getLocaleFromHash(/** @type {any} */ (null))).toThrow(TypeError);
+    expect(() => getLocaleFromHash('')).toThrow(TypeError);
   });
 });
 
@@ -1172,6 +1254,12 @@ describe('json', () => {
       contact: 'Contact',
     });
   });
+
+  it('throws when prefix is not a non-empty string', () => {
+    expect(() => json(/** @type {any} */ (null))).toThrow(TypeError);
+    expect(() => json('')).toThrow(TypeError);
+    expect(() => json(/** @type {any} */ (42))).toThrow(TypeError);
+  });
 });
 
 describe('json — empty dictionary', () => {
@@ -1239,6 +1327,11 @@ describe('date() standalone formatter', () => {
 
     expect(result).toMatch(/2026/);
   });
+
+  it('throws when value is not a Date', () => {
+    expect(() => date(/** @type {any} */ ('2026-01-01'))).toThrow(TypeError);
+    expect(() => date(/** @type {any} */ (null))).toThrow(TypeError);
+  });
 });
 
 describe('time() standalone formatter', () => {
@@ -1268,6 +1361,11 @@ describe('time() standalone formatter', () => {
     const result = time(testTime, { format: 'unknown' });
 
     expect(result).toMatch(/2026/);
+  });
+
+  it('throws when value is not a Date', () => {
+    expect(() => time(/** @type {any} */ (123456789))).toThrow(TypeError);
+    expect(() => time(/** @type {any} */ (null))).toThrow(TypeError);
   });
 });
 
@@ -1313,5 +1411,10 @@ describe('number() standalone formatter', () => {
     const result = number(42, { format: 'unknown' });
 
     expect(result).toBe('42');
+  });
+
+  it('throws when value is not a number', () => {
+    expect(() => number(/** @type {any} */ ('42'))).toThrow(TypeError);
+    expect(() => number(/** @type {any} */ (null))).toThrow(TypeError);
   });
 });
