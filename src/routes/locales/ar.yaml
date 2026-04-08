@@ -27,10 +27,10 @@ progress: "التقدم: {$ratio :percent}."
 ranking: |
   .input {$rank :number}
   .match $rank
-    one   {{أنت في المرتبة الأولى.}}
-    two   {{أنت في المرتبة الثانية.}}
-    few   {{أنت في المرتبة {$rank}.}}
-    *     {{أنت في المرتبة {$rank}.}}
+    one   {{الفريق في المرتبة الأولى.}}
+    two   {{الفريق في المرتبة الثانية.}}
+    few   {{الفريق في المرتبة {$rank}.}}
+    *     {{الفريق في المرتبة {$rank}.}}
 decimal: "القيمة: {$num :number minimumFractionDigits=2}."
 signed: "التغيير: {$num :number signDisplay=always}."
 id: "المعرّف: {$num :number minimumIntegerDigits=4}."

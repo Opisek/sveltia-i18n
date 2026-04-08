@@ -20,10 +20,10 @@ progress: "Progress: {$ratio :percent}."
 ranking: |
   .input {$rank :number select=ordinal}
   .match $rank
-    one   {{You are ranked {$rank}st.}}
-    two   {{You are ranked {$rank}nd.}}
-    few   {{You are ranked {$rank}rd.}}
-    *     {{You are ranked {$rank}th.}}
+    one   {{The team is ranked {$rank}st.}}
+    two   {{The team is ranked {$rank}nd.}}
+    few   {{The team is ranked {$rank}rd.}}
+    *     {{The team is ranked {$rank}th.}}
 decimal: "Value: {$num :number minimumFractionDigits=2}."
 signed: "Change: {$num :number signDisplay=always}."
 id: "ID: {$num :number minimumIntegerDigits=4}."

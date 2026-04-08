@@ -22,7 +22,7 @@ items: |
     *    {{Znaleziono {$count} elementu.}}
 price: "Cena: {$amount :currency currency=PLN}."
 progress: "Postęp: {$ratio :percent}."
-ranking: "Jesteś na {$rank}. miejscu."
+ranking: "Drużyna jest na {$rank}. miejscu."
 decimal: "Wartość: {$num :number minimumFractionDigits=2}."
 signed: "Zmiana: {$num :number signDisplay=always}."
 id: "ID: {$num :number minimumIntegerDigits=4}."

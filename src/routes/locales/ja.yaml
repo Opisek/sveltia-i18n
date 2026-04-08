@@ -12,7 +12,7 @@ notifications: |
 items: "{$count} 件見つかりました。"
 price: "価格：{$amount :currency currency=JPY}。"
 progress: "進捗：{$ratio :percent}。"
-ranking: "{$rank} 位です。"
+ranking: "チームは {$rank} 位です。"
 decimal: "値：{$num :number minimumFractionDigits=2}。"
 signed: "変化：{$num :number signDisplay=always}。"
 id: "ID：{$num :number minimumIntegerDigits=4}。"

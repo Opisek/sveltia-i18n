@@ -598,10 +598,10 @@ English ordinal suffixes (`1st`, `2nd`, `3rd`, `4th`, …):
 ranking: |
   .input {$rank :number select=ordinal}
   .match $rank
-    one {{You are ranked {$rank}st.}}
-    two {{You are ranked {$rank}nd.}}
-    few {{You are ranked {$rank}rd.}}
-    *   {{You are ranked {$rank}th.}}
+    one {{The team is ranked {$rank}st.}}
+    two {{The team is ranked {$rank}nd.}}
+    few {{The team is ranked {$rank}rd.}}
+    *   {{The team is ranked {$rank}th.}}
 ```
 
 ### Gender selection

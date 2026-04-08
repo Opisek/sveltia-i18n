@@ -21,8 +21,8 @@ progress: "Progression : {$ratio :percent}."
 ranking: |
   .input {$rank :number select=ordinal}
   .match $rank
-    one {{Vous êtes classé(e) {$rank}er.}}
-    *   {{Vous êtes classé(e) {$rank}e.}}
+    one {{L’équipe est classée {$rank}re.}}
+    *   {{L’équipe est classée {$rank}e.}}
 decimal: "Valeur : {$num :number minimumFractionDigits=2}."
 signed: "Variation : {$num :number signDisplay=always}."
 id: "ID : {$num :number minimumIntegerDigits=4}."
