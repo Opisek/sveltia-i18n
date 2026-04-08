@@ -191,7 +191,7 @@ const registerLocaleCode = (localeCode) => {
 /**
  * Add new messages for a locale. Accepts flat or nested maps; nested objects are flattened to
  * dot-separated keys (`field.name`). Multiple dicts can be passed and are merged in order, matching
- * svelte-i18n's `addMessages(locale, ...dicts)` signature.
+ * svelte-i18n’s `addMessages(locale, ...dicts)` signature.
  * @param {string} localeCode Locale.
  * @param {...Record<string, any>} maps One or more message maps (flat or nested).
  * @throws {TypeError} If `localeCode` is not a non-empty string or any map is not a plain object.
@@ -355,7 +355,7 @@ const register = (localeCode, loader) => {
 };
 
 /**
- * Get the user's preferred locale from the browser.
+ * Get the user’s preferred locale from the browser.
  * @returns {string | undefined} The first navigator language, or `undefined` in non-browser
  * environments.
  */
@@ -525,7 +525,7 @@ const format = (key, { values = {}, locale: localeOverride, default: defaultStri
 
 /**
  * Return a nested object of formatted strings for all keys under the given prefix. Equivalent to
- * svelte-i18n's `$json()`. Useful for iterating over a group of messages.
+ * svelte-i18n’s `$json()`. Useful for iterating over a group of messages.
  * @param {string} prefix Key prefix (e.g. `'nav'` matches `nav.home`, `nav.about`, …).
  * @param {{ locale?: string }} [options] Lookup options.
  * @returns {Record<string, string> | undefined} Object mapping suffix keys to formatted strings, or

@@ -66,7 +66,7 @@ import { _, addMessages, init, locale, register, waitLocale } from '@sveltia/i18
 
 ### Async loading with SSR
 
-Register loaders in a shared module, then await them in the root layout's `load` function:
+Register loaders in a shared module, then await them in the root layout’s `load` function:
 
 ```js
 // src/lib/i18n.js
@@ -204,7 +204,7 @@ await locale.set('fr'); // switch to French, triggers any registered loader, upd
 
 `locale.set(value)` returns a `Promise<void>` that resolves once any loader registered for the new locale has finished loading. It also keeps `document.documentElement.lang` and `document.documentElement.dir` (`ltr`/`rtl`) in sync automatically.
 
-**Locale negotiation:** if the requested value is not in the registered `locales` list, `locale.set()` tries to find the best match by language subtag before falling back to the original value. For example, if `en-US` is registered and the user's browser reports `en-CA`, `locale.current` is set to `en-US`.
+**Locale negotiation:** if the requested value is not in the registered `locales` list, `locale.set()` tries to find the best match by language subtag before falling back to the original value. For example, if `en-US` is registered and the user’s browser reports `en-CA`, `locale.current` is set to `en-US`.
 
 ```js
 // locales registered: ['en-US', 'fr', 'ja']
@@ -214,7 +214,7 @@ await locale.set('zh-TW'); // no match → locale.current stays 'zh-TW'
 
 #### `getLocaleFromNavigator()`
 
-Returns the user's preferred locale from the browser (`navigator.languages[0]` or `navigator.language`).
+Returns the user’s preferred locale from the browser (`navigator.languages[0]` or `navigator.language`).
 
 ```js
 import { getLocaleFromNavigator } from '@sveltia/i18n';
@@ -337,7 +337,7 @@ await waitLocale(); // load the current locale
 
 #### `addMessages(localeCode, ...maps)`
 
-Registers one or more message maps for a locale. Values must be valid [MF2](https://messageformat.unicode.org/) message strings. Maps may be **flat** (dot-separated keys) or **nested** objects — both are normalised to dot-separated keys. Multiple maps are merged in order, matching svelte-i18n's variadic signature.
+Registers one or more message maps for a locale. Values must be valid [MF2](https://messageformat.unicode.org/) message strings. Maps may be **flat** (dot-separated keys) or **nested** objects — both are normalised to dot-separated keys. Multiple maps are merged in order, matching svelte-i18n’s variadic signature.
 
 ```js
 import { addMessages } from '@sveltia/i18n';
@@ -410,7 +410,7 @@ t('hello'); // → 'Hello!'
 
 #### `json(prefix, options?)`
 
-Returns a flat object of formatted strings for all message keys under the given prefix. Equivalent to svelte-i18n's `$json()`. Useful for iterating over a group of related messages without knowing every key name.
+Returns a flat object of formatted strings for all message keys under the given prefix. Equivalent to svelte-i18n’s `$json()`. Useful for iterating over a group of related messages without knowing every key name.
 
 ```js
 import { json } from '@sveltia/i18n';
@@ -442,7 +442,7 @@ Options:
 
 #### `date(value, options?)`
 
-Formats a `Date` as a localized date string. Equivalent to svelte-i18n's `$date()`.
+Formats a `Date` as a localized date string. Equivalent to svelte-i18n’s `$date()`.
 
 Options accept any `Intl.DateTimeFormatOptions` plus:
 
@@ -463,7 +463,7 @@ date(new Date('2026-01-23'), { locale: 'fr-FR', format: 'long' }); // → '23 ja
 
 #### `time(value, options?)`
 
-Formats a `Date` as a localized time string. Equivalent to svelte-i18n's `$time()`.
+Formats a `Date` as a localized time string. Equivalent to svelte-i18n’s `$time()`.
 
 Options accept any `Intl.DateTimeFormatOptions` plus `locale` and `format` (same named formats as `date()` but from the `time` set: `short`, `medium`, `long`, `full`).
 
@@ -478,7 +478,7 @@ time(new Date('2026-01-23T15:04:00'), { format: 'medium' }); // → '3:04:00 PM'
 
 #### `number(value, options?)`
 
-Formats a number as a localized string. Equivalent to svelte-i18n's `$number()`.
+Formats a number as a localized string. Equivalent to svelte-i18n’s `$number()`.
 
 Options accept any `Intl.NumberFormatOptions` plus:
 
@@ -536,7 +536,7 @@ French treats 0 as singular:
 notifications: |
   .input {$count :integer}
   .match $count
-    0   {{Vous n'avez pas de notifications.}}
+    0   {{Vous n’avez pas de notifications.}}
     one {{Vous avez {$count} notification.}}
     *   {{Vous avez {$count} notifications.}}
 ```
