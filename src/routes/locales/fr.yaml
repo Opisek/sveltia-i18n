@@ -7,7 +7,7 @@ time-precise: "Heure précise : {$time :time precision=second}."
 notifications: |
   .input {$count :integer}
   .match $count
-    0   {{Vous n’avez pas de notifications.}}
+    0   {{Vous n’avez aucune notification.}}
     one {{Vous avez {$count} notification.}}
     *   {{Vous avez {$count} notifications.}}
 items: |
@@ -18,7 +18,11 @@ items: |
     *   {{Trouvé {$count} éléments.}}
 price: "Prix : {$amount :currency currency=EUR}."
 progress: "Progression : {$ratio :percent}."
-ranking: "Vous êtes classé(e) {$rank}e."
+ranking: |
+  .input {$rank :number select=ordinal}
+  .match $rank
+    one {{Vous êtes classé(e) {$rank}er.}}
+    *   {{Vous êtes classé(e) {$rank}e.}}
 decimal: "Valeur : {$num :number minimumFractionDigits=2}."
 signed: "Variation : {$num :number signDisplay=always}."
 id: "ID : {$num :number minimumIntegerDigits=4}."

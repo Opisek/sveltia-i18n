@@ -15,10 +15,11 @@ notifications: |
 items: |
   .input {$count :integer}
   .match $count
+    0    {{Nie znaleziono żadnych elementów.}}
     one  {{Znaleziono {$count} element.}}
     few  {{Znaleziono {$count} elementy.}}
     many {{Znaleziono {$count} elementów.}}
-    *    {{Znaleziono {$count} elementów.}}
+    *    {{Znaleziono {$count} elementu.}}
 price: "Cena: {$amount :currency currency=PLN}."
 progress: "Postęp: {$ratio :percent}."
 ranking: "Jesteś na {$rank}. miejscu."

@@ -536,7 +536,7 @@ French treats 0 as singular:
 notifications: |
   .input {$count :integer}
   .match $count
-    0   {{Vous n’avez pas de notifications.}}
+    0   {{Vous n’avez aucune notification.}}
     one {{Vous avez {$count} notification.}}
     *   {{Vous avez {$count} notifications.}}
 ```
@@ -561,10 +561,11 @@ notifications: |
 items: |
   .input {$count :integer}
   .match $count
+    0    {{Nie znaleziono żadnych elementów.}}
     one  {{Znaleziono {$count} element.}}
     few  {{Znaleziono {$count} elementy.}}
     many {{Znaleziono {$count} elementów.}}
-    *    {{Znaleziono {$count} elementów.}}
+    *    {{Znaleziono {$count} elementu.}}
 ```
 
 <!-- cSpell:enable -->
