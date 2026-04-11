@@ -261,6 +261,12 @@ const waitLocale = (localeCode = _locale) => {
         },
         () => {
           loaderPromises.delete(localeCode);
+
+          // If the failed `locale` is still the active one and has no `dictionary` entry, fall back
+          // so that `isLoading()` does not remain `true` forever.
+          if (_locale === localeCode && !dictionary[localeCode] && _resolvedFallback) {
+            _locale = _resolvedFallback;
+          }
         },
       );
 
@@ -301,8 +307,15 @@ const locale = {
 
     let resolved = locales.length ? negotiateLocale(value, locales) : value;
 
-    // If no registered locale matched, fall back to fallbackLocale.
-    if (value && locales.length && !locales.includes(resolved) && fallbackLocale) {
+    // If no registered locale matched, fall back to `fallbackLocale` (only when it actually
+    // resolved to a registered locale; otherwise keep the original value).
+    if (
+      value &&
+      locales.length &&
+      !locales.includes(resolved) &&
+      _resolvedFallback &&
+      locales.includes(_resolvedFallback)
+    ) {
       resolved = _resolvedFallback;
     }
 
@@ -636,11 +649,28 @@ const number = (value, { locale: loc, format: fmt, ...rest } = {}) => {
   return new Intl.NumberFormat(loc ?? _locale, { ...named, ...rest }).format(value);
 };
 
+/**
+ * Reset all internal state. Intended **only** for use in tests.
+ * @internal
+ */
+const _reset = () => {
+  _locale = '';
+  locales.splice(0);
+  Object.keys(dictionary).forEach((k) => delete dictionary[k]);
+  loaderQueue.clear();
+  loaderPromises.clear();
+  fallbackLocale = '';
+  _resolvedFallback = '';
+  missingMessageHandler = undefined;
+  customFormats = {};
+};
+
 // Export all public API as named exports, and also alias `format` as `_` and `t` for convenience.
 // We cannot use `export const` syntax for each symbol because the TypeScript conversion fails to
 // export the comments with the functions.
 export {
   format as _,
+  _reset,
   addMessages,
   date,
   dictionary,

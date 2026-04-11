@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   _,
+  _reset,
   addMessages,
   date,
   dictionary,
@@ -30,11 +31,7 @@ import {
 const stripBidi = (/** @type {string} */ s) => s.replace(/[\u2068\u2069]/g, '');
 
 beforeEach(() => {
-  locale.set('');
-  locales.splice(0);
-  Object.keys(dictionary).forEach((k) => delete dictionary[k]);
-  // Reset module-level config (fallbackLocale, missingMessageHandler, customFormats)
-  init({ fallbackLocale: '' });
+  _reset();
 });
 
 describe('locale', () => {
@@ -902,6 +899,18 @@ describe('register + waitLocale', () => {
     expect(format('ciao')).toBe('Ciao');
   });
 
+  it('falls back from stuck locale when loader rejects and fallback is available', async () => {
+    addMessages('en', { hello: 'Hello' });
+    init({ fallbackLocale: 'en', initialLocale: 'en' });
+
+    register('fr', () => Promise.reject(new Error('network error')));
+    await locale.set('fr');
+
+    // After rejection, locale should fall back to 'en' so isLoading() is false
+    expect(isLoading()).toBe(false);
+    expect(locale.current).toBe('en');
+  });
+
   it('re-settles the locale when register() is called after init()', async () => {
     init({ fallbackLocale: 'en', initialLocale: 'fr' });
     expect(locale.current).toBe('fr'); // unresolved — no locales registered yet
@@ -1147,7 +1156,7 @@ describe('locale negotiation', () => {
   });
 
   it('negotiates regional variant to available base language (en-US → en when only en is registered)', () => {
-    locales.splice(0);
+    _reset();
     addMessages('en', { greeting: 'Hello' });
     addMessages('fr', { greeting: 'Bonjour' });
     locale.set('en-US');
@@ -1165,7 +1174,7 @@ describe('locale negotiation', () => {
   });
 
   it('bypasses negotiation when locales list is empty', () => {
-    locales.splice(0);
+    _reset();
     locale.set('en-CA');
     expect(locale.current).toBe('en-CA');
   });
@@ -1173,7 +1182,8 @@ describe('locale negotiation', () => {
   it('skips malformed entries in the locales list without throwing', () => {
     // An invalid BCP 47 tag makes new Intl.Locale() throw inside the inner catch.
     // Use 'zh-TW' so no valid language match exists and the loop reaches '!!!'.
-    locales.push('!!!');
+    // Register '!!!' via register() so it appears in the locales list without being parsed.
+    register('!!!', () => Promise.resolve({}));
     locale.set('zh-TW');
     // No 'zh' entry — negotiation falls back to the original value.
     expect(locale.current).toBe('zh-TW');
@@ -1183,6 +1193,16 @@ describe('locale negotiation', () => {
     // Triggers the outer catch — new Intl.Locale(requested) throws.
     locale.set('!!!');
     expect(locale.current).toBe('!!!');
+  });
+
+  it('does not silently clear locale when fallbackLocale has no registered match', () => {
+    addMessages('en-US', { greeting: 'Hello' });
+    init({ fallbackLocale: 'zh', initialLocale: 'en-US' });
+    // 'de' has no match, and fallback 'zh' is not registered either.
+    // locale should keep 'de' instead of being silently set to ''.
+    locale.set('de');
+    expect(locale.current).toBe('de');
+    expect(locale.current).not.toBe('');
   });
 });
 
@@ -1416,5 +1436,23 @@ describe('number() standalone formatter', () => {
   it('throws when value is not a number', () => {
     expect(() => number(/** @type {any} */ ('42'))).toThrow(TypeError);
     expect(() => number(/** @type {any} */ (null))).toThrow(TypeError);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Read-only exports
+// ---------------------------------------------------------------------------
+
+describe('reactive exports', () => {
+  it('locales reflects registered locales', () => {
+    addMessages('en', { hi: 'Hi' });
+    expect(locales).toContain('en');
+    expect(Array.isArray(locales)).toBe(true);
+  });
+
+  it('dictionary reflects registered messages', () => {
+    addMessages('en', { hi: 'Hi' });
+    expect(dictionary.en).toBeDefined();
+    expect(typeof dictionary.en.hi.format).toBe('function');
   });
 });
